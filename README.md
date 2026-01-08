@@ -348,3 +348,267 @@ fs.readFile("file.txt", "utf8", (err, data) => {
 - Events enable event-driven programming using `EventEmitter`
 - Callbacks handle asynchronous execution
 - Both are core concepts in Node.js async architecture
+
+# Node.js Modules and npm
+
+## What are Modules?
+
+- A **module** is a reusable piece of code.
+- Helps keep code **organized**, **maintainable**, and **scalable**.
+- Each file in Node.js is treated as a separate module.
+
+## How Modules Work in Node.js
+
+- Node.js uses the **CommonJS** module system by default.
+- Uses `require()` to import modules.
+- Uses `module.exports` to export code.
+
+## Creating and Using Custom Modules
+
+### Creating a Module
+
+```js
+// math.js
+function add(a, b) {
+  return a + b;
+}
+
+module.exports = add;
+```
+
+### Using the Module
+
+```js
+// app.js
+const add = require("./math");
+console.log(add(2, 3));
+```
+
+## Built-in Modules (Reference)
+
+Node.js provides many built-in modules without installation:
+
+- `fs` – File system operations
+- `http` – Create web servers
+- `path` – Handle file paths
+- `os` – System-related information
+- `events` – Event-driven programming
+
+Example:
+
+```js
+const fs = require("fs");
+fs.writeFileSync("test.txt", "Hello Node");
+```
+
+## npm (Node Package Manager)
+
+- Comes bundled with Node.js
+- Used to install, update, and manage dependencies
+- Stores dependency info in `package.json`
+
+### Common npm Commands
+
+```bash
+npm init -y
+npm install package-name
+npm uninstall package-name
+npm install --save-dev package-name
+```
+
+## Using Third-Party Libraries from npm
+
+### lodash (utility functions)
+
+```js
+const _ = require("lodash");
+console.log(_.chunk([1, 2, 3, 4], 2));
+```
+
+### axios (HTTP requests)
+
+```js
+const axios = require("axios");
+axios.get("https://api.example.com/data").then((res) => console.log(res.data));
+```
+
+### joi (data validation)
+
+```js
+const Joi = require("joi");
+
+const schema = Joi.object({
+  name: Joi.string().required(),
+});
+```
+
+### moment (date handling)
+
+```js
+const moment = require("moment");
+console.log(moment().format("YYYY-MM-DD"));
+```
+
+### async (async utilities)
+
+```js
+const async = require("async");
+```
+
+### dotenv (environment variables)
+
+```js
+require("dotenv").config();
+console.log(process.env.PORT);
+```
+
+### nodemon (development tool)
+
+- Automatically restarts server on file changes
+- Installed as a dev dependency
+
+```bash
+npm install nodemon --save-dev
+```
+
+## Summary
+
+- Modules help structure Node.js applications
+- Built-in modules come with Node.js
+- npm provides access to thousands of third-party packages
+- Third-party libraries speed up development
+
+# Express.js Framework
+
+## What is Express?
+
+- **Express.js** is a fast, minimal, and flexible web framework for Node.js.
+- Used to build **web applications** and **RESTful APIs**.
+- Sits on top of Node.js and simplifies server-side development.
+
+## Introduction to Express.js and Its Features
+
+- Simple routing system
+- Middleware-based architecture
+- Easy request and response handling
+- Supports REST APIs
+- Large ecosystem and community support
+
+## Creating a Basic Express Application
+
+### Install Express
+
+```bash
+npm install express
+```
+
+### Basic Server Setup
+
+```js
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Hello Express");
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+```
+
+## Handling Routes and HTTP Methods
+
+- Routes define how the app responds to client requests
+- Common HTTP methods: `GET`, `POST`, `PUT`, `DELETE`
+
+```js
+app.get("/users", (req, res) => {
+  res.json({ users: [] });
+});
+
+app.post("/users", (req, res) => {
+  res.send("User created");
+});
+```
+
+## Request and Response Objects
+
+- `req` (Request): contains request data (params, query, body, headers)
+- `res` (Response): used to send data back to the client
+
+```js
+app.get("/profile/:id", (req, res) => {
+  const id = req.params.id;
+  res.status(200).json({ userId: id });
+});
+```
+
+## Middleware Concepts
+
+- Middleware functions run **between request and response**
+- Can modify `req` and `res`
+- Can end request-response cycle or pass control
+
+### Common Uses of Middleware
+
+- Logging
+- Authentication & authorization
+- Validation
+- Parsing request bodies
+
+### Example Middleware
+
+```js
+app.use((req, res, next) => {
+  console.log(req.method, req.url);
+  next();
+});
+```
+
+## Built-in Middleware
+
+```js
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true }));
+```
+
+## Building RESTful APIs with Express
+
+- Uses routes + HTTP methods
+- Returns JSON responses
+
+```js
+app.get("/api/products", (req, res) => {
+  res.json([{ id: 1, name: "Phone" }]);
+});
+```
+
+## Authentication and Authorization Using Middleware
+
+- Authentication: Verify user identity
+- Authorization: Check user permissions
+- Common approach: **JWT (JSON Web Token)**
+
+### Auth Middleware Example (Concept)
+
+```js
+function authMiddleware(req, res, next) {
+  const token = req.headers.authorization;
+  if (!token) return res.status(401).send("Access denied");
+  next();
+}
+
+app.get("/dashboard", authMiddleware, (req, res) => {
+  res.send("Protected route");
+});
+```
+
+> JWT implementation details are covered in **Topic 7**.
+
+## Summary
+
+- Express simplifies Node.js server development
+- Routing and middleware are core concepts
+- Ideal for building REST APIs
+- Middleware enables authentication, validation, and logging
