@@ -863,3 +863,110 @@ app.delete("/api/admin", authMiddleware, authorizeRole("admin"), (req, res) => {
 
 - **Passport + Sessions**: Stateful, server-managed
 - **JWT**: Stateless, scalable, ideal for APIs
+
+# Error Handling and Logging in Node.js
+
+## Handling Errors and Exceptions in Node.js
+
+- Errors can occur due to invalid input, failed I/O operations, or system issues.
+- Node.js uses **error-first callbacks**, **try-catch**, and **Promise rejection handling**.
+
+### try-catch (Synchronous)
+
+```js
+try {
+  throw new Error("Something went wrong");
+} catch (err) {
+  console.error(err.message);
+}
+```
+
+### Handling Async Errors (Promises)
+
+```js
+fetchData()
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err));
+```
+
+## Error Handling in Express Applications
+
+- Centralized error handling improves maintainability.
+- Errors should be passed using `next(err)`.
+
+### Error Handling Middleware
+
+```js
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Internal Server Error" });
+});
+```
+
+## HTTP Status Codes (Commonly Used)
+
+- **200 OK** – Successful request
+- **401 Unauthorized** – Authentication required or failed
+- **404 Not Found** – Resource not found
+- **500 Internal Server Error** – Server-side error
+- **502 Bad Gateway** – Invalid response from upstream server
+
+```js
+res.status(404).json({ message: "Resource not found" });
+```
+
+## Logging and Debugging Techniques
+
+- Use `console.log()` for basic debugging
+- Use structured logging for production
+- Log errors, warnings, and important events
+
+## Logging Libraries
+
+### Winston (Popular Logger)
+
+```bash
+npm install winston
+```
+
+```js
+const winston = require("winston");
+
+const logger = winston.createLogger({
+  level: "info",
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "error.log", level: "error" }),
+  ],
+});
+
+logger.info("Application started");
+logger.error("Something failed");
+```
+
+### Bunyan (Structured JSON Logging)
+
+```bash
+npm install bunyan
+```
+
+```js
+const bunyan = require("bunyan");
+const log = bunyan.createLogger({ name: "my-app" });
+
+log.info("Server running");
+log.error("Unexpected error");
+```
+
+## Implementing Error Logging and Monitoring
+
+- Store logs in files or external services
+- Helps track production issues
+- Can be integrated with monitoring tools (e.g., log aggregators)
+
+## Best Practices
+
+- Always return proper HTTP status codes
+- Never expose sensitive error details to clients
+- Log errors with enough context
+- Use centralized error-handling middleware
