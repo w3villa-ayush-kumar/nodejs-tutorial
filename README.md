@@ -343,12 +343,6 @@ fs.readFile("file.txt", "utf8", (err, data) => {
 - **Events**: Handle multiple occurrences over time
 - Events are better for **continuous or repeated actions**
 
-## Summary
-
-- Events enable event-driven programming using `EventEmitter`
-- Callbacks handle asynchronous execution
-- Both are core concepts in Node.js async architecture
-
 # Node.js Modules and npm
 
 ## What are Modules?
@@ -470,13 +464,6 @@ console.log(process.env.PORT);
 ```bash
 npm install nodemon --save-dev
 ```
-
-## Summary
-
-- Modules help structure Node.js applications
-- Built-in modules come with Node.js
-- npm provides access to thousands of third-party packages
-- Third-party libraries speed up development
 
 # Express.js Framework
 
@@ -605,13 +592,6 @@ app.get("/dashboard", authMiddleware, (req, res) => {
 ```
 
 > JWT implementation details are covered in **Topic 7**.
-
-## Summary
-
-- Express simplifies Node.js server development
-- Routing and middleware are core concepts
-- Ideal for building REST APIs
-- Middleware enables authentication, validation, and logging
 
 # Database Integration with Node.js
 
@@ -970,3 +950,123 @@ log.error("Unexpected error");
 - Never expose sensitive error details to clients
 - Log errors with enough context
 - Use centralized error-handling middleware
+
+# Testing and Debugging in Node.js
+
+## What is Testing?
+
+- **Testing** verifies that application code works as expected.
+- Helps catch bugs early and improves code quality.
+- Makes refactoring safer and increases confidence in changes.
+
+## Types of Testing (Focus on Unit Testing)
+
+- **Unit Testing**: Tests individual functions or modules in isolation.
+- **Integration Testing**: Tests interaction between modules (optional here).
+
+## Unit Testing Frameworks
+
+- **Mocha** – Test runner
+- **Chai** – Assertion library
+- **Jest** – All-in-one testing framework (runner + assertions + mocks)
+
+## Unit Testing with Mocha and Chai
+
+### Install Dependencies
+
+```bash
+npm install mocha chai --save-dev
+```
+
+### Sample Function to Test
+
+```js
+// math.js
+function add(a, b) {
+  return a + b;
+}
+module.exports = add;
+```
+
+### Writing a Unit Test
+
+```js
+// test/math.test.js
+const { expect } = require("chai");
+const add = require("../math");
+
+describe("add function", () => {
+  it("should add two numbers", () => {
+    expect(add(2, 3)).to.equal(5);
+  });
+});
+```
+
+### Run Tests
+
+```bash
+npx mocha
+```
+
+## Writing Tests for Node.js APIs
+
+- Use tools like **Supertest** to test Express APIs.
+
+```bash
+npm install supertest --save-dev
+```
+
+```js
+request(app).get("/api/users").expect(200);
+```
+
+## Using Jest (Alternative)
+
+### Install Jest
+
+```bash
+npm install jest --save-dev
+```
+
+### Jest Test Example
+
+```js
+test("adds numbers", () => {
+  expect(2 + 3).toBe(5);
+});
+```
+
+## Assertions, Mocking, and Test Runners
+
+- **Assertions**: Verify expected output (`expect`, `assert`)
+- **Mocking**: Fake dependencies for isolated tests
+- **Test Runner**: Executes and reports test results
+
+## Debugging Techniques and Tools
+
+- `console.log()` for quick debugging
+- Node.js built-in debugger
+
+### Debug with Node
+
+```bash
+node --inspect app.js
+```
+
+- Use VS Code debugger for breakpoints and step-through execution
+
+## Test-Driven Development (TDD) (Optional)
+
+- Write tests **before** writing actual code
+- Follow the cycle:
+
+  1. Write failing test
+  2. Write minimum code to pass
+  3. Refactor
+
+## Benefits of Testing
+
+- Reduces bugs
+- Improves code design
+- Makes collaboration easier
+- Essential for production-ready applications
