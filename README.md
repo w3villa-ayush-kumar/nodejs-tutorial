@@ -1173,3 +1173,132 @@ app.use(helmet());
 - **XSS** – Output escaping
 - **CSRF** – CSRF tokens
 - **Brute Force** – Rate limiting
+
+# Deployment and DevOps for Node.js
+
+## Configuration Management
+
+- Configuration should be **environment-specific** (dev, test, prod).
+- Sensitive data must not be hard-coded.
+
+### Environment Variables with `.env`
+
+```bash
+npm install dotenv
+```
+
+```env
+PORT=3000
+DB_URL=mongodb://localhost:27017/appdb
+JWT_SECRET=secretKey
+```
+
+```js
+require("dotenv").config();
+console.log(process.env.PORT);
+```
+
+- `.env` files should be added to `.gitignore`.
+
+## Preparing Node.js for Production
+
+### Production Best Practices
+
+- Set `NODE_ENV=production`
+- Handle errors properly
+- Use logging instead of console logs
+- Enable process monitoring
+
+## Using PM2 (Process Manager)
+
+- Keeps apps alive
+- Auto-restarts on crash
+- Supports clustering
+
+### Install PM2
+
+```bash
+npm install pm2 -g
+```
+
+### Start Application with PM2
+
+```bash
+pm2 start app.js --name my-app
+pm2 list
+pm2 logs
+```
+
+### PM2 Cluster Mode
+
+```bash
+pm2 start app.js -i max
+```
+
+## Deployment of Node.js Applications (Overview)
+
+### Basic Deployment Steps
+
+1. Build and test application
+2. Configure environment variables
+3. Start app using PM2
+4. Expose app using reverse proxy (e.g., Nginx)
+
+## Deployment Strategies
+
+- **Manual deployment** (copy files + run server)
+- **CI/CD-based deployment** (automated)
+- **Blue-Green deployment** (zero downtime)
+- **Rolling updates**
+
+## Continuous Integration and Deployment (CI/CD)
+
+- **CI**: Automatically test and build code
+- **CD**: Automatically deploy after successful CI
+
+### Common CI/CD Tools
+
+- Jenkins
+- Travis CI
+- GitHub Actions
+
+## CI/CD Using GitHub Actions (Concept)
+
+```yaml
+name: Node CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - run: npm install
+      - run: npm test
+```
+
+## Deploying to Cloud Platforms
+
+### AWS / Azure / Heroku (Overview)
+
+- Upload code or connect GitHub repo
+- Configure environment variables
+- Use managed services for scalability
+
+### Heroku Example
+
+```bash
+heroku create
+heroku config:set NODE_ENV=production
+heroku deploy
+```
+
+## Implementing CI/CD Pipelines
+
+- Automate testing, building, and deployment
+- Ensures consistent and reliable releases
+- Reduces manual errors
