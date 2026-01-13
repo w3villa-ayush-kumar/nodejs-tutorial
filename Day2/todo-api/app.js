@@ -7,10 +7,16 @@ app.use(express.json());
 let todos = [];
 let idCount = 1;
 
+// middleware
 app.use((req, res, next) => {
     logger.info(`${req.method} ${req.url}`);
     next();
 });
+
+app.resetTodos = () => {
+    todos = [];
+    id = 1;
+};
 
 app.post('/todos', (req, res) => {
     try {
@@ -96,6 +102,4 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Something went wrong!' });
 });
 
-app.listen(3000, () => {
-    logger.info('Server running on port 3000');
-});
+module.exports = app;
