@@ -1070,3 +1070,106 @@ node --inspect app.js
 - Improves code design
 - Makes collaboration easier
 - Essential for production-ready applications
+
+# Performance Optimization, Security, and Scalability in Node.js
+
+## Identifying Performance Bottlenecks
+
+- Bottlenecks slow down application response time.
+- Common causes:
+
+  - Blocking (synchronous) code
+  - Heavy CPU tasks on main thread
+  - Slow database queries
+  - Excessive network calls
+
+### Tools to Identify Issues
+
+- `console.time()` / `console.timeEnd()`
+- Node.js profiler (`--inspect`)
+- Monitoring response time and memory usage
+
+## Performance Optimization Techniques
+
+- Use **asynchronous APIs** instead of synchronous ones
+- Avoid blocking the event loop
+- Optimize database queries and indexes
+- Reuse connections (DB, HTTP)
+
+```js
+// Avoid
+const data = fs.readFileSync("file.txt");
+
+// Prefer
+fs.readFile("file.txt", callback);
+```
+
+## Caching Strategies
+
+- Caching reduces repeated computation and database calls.
+
+### Types of Caching
+
+- **In-memory caching** (e.g., Node.js variables)
+- **External caching** (Redis, Memcached)
+- **HTTP caching** (headers)
+
+### Simple In-Memory Cache Example
+
+```js
+const cache = {};
+
+function getData(key) {
+  if (cache[key]) return cache[key];
+  cache[key] = "result";
+  return cache[key];
+}
+```
+
+## Scaling Node.js Applications
+
+### Horizontal Scaling
+
+- Running multiple instances of the application
+- Distributes load across servers
+- Improves availability and performance
+
+### Techniques
+
+- Node.js **Cluster module**
+- Load balancers (Nginx, cloud load balancers)
+
+```js
+const cluster = require("cluster");
+```
+
+## Security Best Practices
+
+### Common Security Measures
+
+- Validate and sanitize user input
+- Use HTTPS
+- Store secrets in environment variables
+- Implement authentication & authorization (JWT)
+
+### Security Libraries
+
+- `helmet` – Secure HTTP headers
+- `bcrypt` – Password hashing
+- `express-rate-limit` – Prevent brute-force attacks
+
+```bash
+npm install helmet
+```
+
+```js
+const helmet = require("helmet");
+app.use(helmet());
+```
+
+## Preventing Common Attacks
+
+- **SQL/NoSQL Injection** – Input validation
+- **XSS** – Output escaping
+- **CSRF** – CSRF tokens
+- **Brute Force** – Rate limiting
