@@ -1,4 +1,4 @@
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -6,7 +6,7 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password");
         if (!user) {
             return res.status(404).json({
                 message: "User not found"
@@ -21,7 +21,7 @@ export const login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { _id: user._id, email: user.email },
+            { _id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
@@ -54,15 +54,13 @@ export const createUser = async (req, res) => {
             });
         }
 
-        const hashPassword = await bcrypt.hash(password, 10)
-
         const user = new User({
             name,
             email,
-            password: hashPassword
+            password
         });
 
-        const savedUser = await user.save();
+        await user.save();
 
         res.status(201).json({
             message: "User created successfully",
@@ -76,9 +74,9 @@ export const createUser = async (req, res) => {
 
 }
 
-export const getUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select("-password");
+        const users = await User.find();
 
         if (!users) {
             return res.status(404).json({
@@ -96,9 +94,9 @@ export const getUsers = async (req, res) => {
     }
 }
 
-export const getUser = async (req, res) => {
+export const getSingleUser = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).select("-password");
+        const user = await User.findById(req.params.id);
 
         if (!user) {
             return res.status(404).json({
@@ -120,21 +118,16 @@ export const updateUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        if (password) {
-            password = await bcrypt.hash(password, 10);
-        }
-
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            { name, email, password },
-            { new: true, runValidators: true }
-        );
-
+        const user = await User.findById(req.params.id);
         if (!user) {
-            return res.status(404).json({
-                message: "User not found"
-            });
+            return res.status(404).json({ message: "User not found" });
         }
+
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (password) user.password = password;
+
+        await user.save();
 
         res.status(200).json(user);
     } catch (err) {
@@ -156,7 +149,9 @@ export const deleteUser = async (req, res) => {
             });
         }
 
-        res.status(204).send();
+        res.status(200).json({
+            message: "User deleted successfully"
+        });
     } catch (err) {
         res.status(500).json({
             message: "User could not be deleted",

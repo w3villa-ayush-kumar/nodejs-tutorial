@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs'
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -11,15 +12,34 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Please enter the email'],
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true,
+        match: [
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            "Please enter a valid email address"
+        ]
     },
     password: {
         type: String,
         required: [true, 'Please enter the email'],
         minlength: [8, 'Password must be at least 8 characters'],
-        maxlength: [18, 'Password must be at most 18 characters']
+        maxlength: [18, 'Password must be at most 18 characters'],
+        select: false
+    },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
     }
 }, { timestamps: true })
+
+
+UserSchema.pre("save", async function () {
+    if (!this.isModified("password")) return;
+
+    this.password = await bcrypt.hash(this.password, 10);
+});
 
 const User = mongoose.model("User", UserSchema);
 

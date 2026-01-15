@@ -14,7 +14,7 @@ const BlogSchema = new mongoose.Schema({
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Blog"
+        ref: "User"
     }
 
 }, { timestamps: true })
