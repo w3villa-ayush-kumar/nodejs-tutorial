@@ -1302,3 +1302,465 @@ heroku deploy
 - Automate testing, building, and deployment
 - Ensures consistent and reliable releases
 - Reduces manual errors
+
+# AWS Cloud Services – Detailed Overview
+
+## What is AWS (Amazon Web Services)?
+
+- **AWS** is a cloud computing platform provided by Amazon.
+- It offers **on-demand computing resources** over the internet.
+- You pay only for what you use (pay-as-you-go model).
+- Used to host applications, store data, manage infrastructure, and scale globally.
+
+## Why Use AWS?
+
+- No need to manage physical servers
+- Highly scalable and reliable
+- Global infrastructure (regions & availability zones)
+- Strong security and compliance
+- Wide range of managed services
+
+---
+
+## Core AWS Concepts
+
+### Region
+
+- A **Region** is a geographical area (e.g., `ap-south-1`, `us-east-1`).
+- Each region is isolated for fault tolerance.
+
+### Availability Zone (AZ)
+
+- A **Region** contains multiple **Availability Zones**.
+- AZs are independent data centers within a region.
+- Used for high availability and fault tolerance.
+
+### Instance
+
+- An **instance** is a virtual server running in the cloud.
+- Example: EC2 instance running Linux or Windows.
+
+---
+
+## IAM (Identity and Access Management)
+
+IAM controls **who can access AWS** and **what they can do**.
+
+### IAM Users
+
+- Represents a **person or application**.
+- Has login credentials (password / access keys).
+
+### IAM Groups
+
+- Collection of IAM users.
+- Permissions assigned to group are inherited by users.
+
+### IAM Roles
+
+- Used by **AWS services** (EC2, Lambda, Beanstalk).
+- No username/password.
+- Temporary permissions.
+
+Example use case:
+
+- EC2 instance accessing S3 using a role.
+
+### IAM Policies
+
+- JSON documents defining permissions.
+- Attached to users, groups, or roles.
+
+```json
+{
+  "Effect": "Allow",
+  "Action": "s3:GetObject",
+  "Resource": "*"
+}
+```
+
+### Key IAM Terms
+
+- **Least privilege principle** – give minimum required access
+- **Access Keys** – used by applications
+- **MFA** – multi-factor authentication
+
+---
+
+## EC2 (Elastic Compute Cloud)
+
+EC2 provides **virtual servers** in the cloud.
+
+### EC2 Instance
+
+- A virtual machine running an OS.
+- Types vary by CPU, memory, network, cost.
+
+### Instance Types
+
+- `t` – burstable (t2, t3)
+- `m` – general purpose
+- `c` – compute optimized
+- `r` – memory optimized
+
+### AMI (Amazon Machine Image)
+
+- Template used to launch instances.
+- Includes OS + preinstalled software.
+
+### Key EC2 Components
+
+- **Key Pair** – used for SSH access
+- **Security Group** – virtual firewall
+- **Elastic IP** – static public IP
+
+---
+
+## Auto Scaling
+
+- Automatically adjusts number of EC2 instances.
+- Ensures performance during traffic spikes.
+
+### Benefits
+
+- High availability
+- Cost optimization
+- Automatic recovery
+
+---
+
+## Load Balancing (ELB)
+
+- Distributes traffic across multiple instances.
+
+### Types of Load Balancers
+
+- **Application Load Balancer (ALB)** – HTTP/HTTPS
+- **Network Load Balancer (NLB)** – TCP/UDP
+- **Classic Load Balancer** – legacy
+
+---
+
+## Elastic Beanstalk
+
+- **Platform-as-a-Service (PaaS)**.
+- Simplifies deployment of applications.
+
+### What Beanstalk Manages
+
+- EC2 instances
+- Load balancer
+- Auto Scaling
+- Monitoring
+
+### Supported Platforms
+
+- Node.js, Java, Python, Ruby, PHP, Docker
+
+### Benefits
+
+- No need to manage infrastructure manually
+- Focus on application code
+
+---
+
+## S3 (Simple Storage Service)
+
+S3 is **object storage** for files and data.
+
+### Buckets
+
+- Containers for storing objects.
+- Bucket names must be globally unique.
+
+### Objects
+
+- Files stored in buckets.
+- Includes data + metadata.
+
+### Access Points
+
+- Simplify access management for large buckets.
+- Provide controlled access to specific data.
+
+### S3 Use Cases
+
+- File storage
+- Backups
+- Static website hosting
+- Logs and media files
+
+### S3 Security
+
+- Bucket policies
+- IAM policies
+- Public access block
+
+---
+
+## CloudWatch
+
+- AWS monitoring and observability service.
+
+### What CloudWatch Monitors
+
+- EC2 CPU utilization
+- Memory (with agent)
+- Logs
+- Application metrics
+
+### CloudWatch Logs
+
+- Collect and store logs
+- Useful for debugging and auditing
+
+### Alarms
+
+- Trigger alerts based on metrics
+- Example: CPU > 80%
+
+---
+
+## How These Services Work Together (Example Flow)
+
+1. User accesses application
+2. Load Balancer routes traffic
+3. EC2 instances handle requests
+4. Auto Scaling adjusts instances
+5. App reads/writes files to S3
+6. IAM roles manage permissions
+7. CloudWatch monitors performance
+
+# WebSocket Communication using Socket.io (Node.js + React)
+
+This project demonstrates **real-time, bidirectional communication** between a **Node.js backend** and a **React frontend** using **Socket.io**.
+
+---
+
+## What is WebSocket?
+
+- WebSocket enables **persistent connections** between client and server.
+- Unlike HTTP (request-response), WebSocket allows **real-time data transfer**.
+- Common use cases: chat apps, live notifications, multiplayer games.
+
+## What is Socket.io?
+
+- Socket.io is a library built on top of WebSocket.
+- Provides:
+
+  - Automatic reconnection
+  - Event-based communication
+  - Fallbacks if WebSocket is unavailable
+
+---
+
+## Project Architecture
+
+```
+Client (React)  <==== WebSocket ====►  Server (Node.js + Express)
+```
+
+- Client connects using `socket.io-client`
+- Server listens using `socket.io`
+- Messages are exchanged using **custom events**
+
+---
+
+## Backend (Node.js + Express + Socket.io)
+
+### Packages Used
+
+- `express` – HTTP server framework
+- `http` – Creates raw HTTP server
+- `socket.io` – WebSocket communication
+- `cors` – Enable cross-origin requests
+
+---
+
+## Backend Setup Flow
+
+### 1. Create Express App and HTTP Server
+
+- Socket.io requires a **raw HTTP server**
+
+```js
+const server = createServer(app);
+```
+
+---
+
+### 2. Initialize Socket.io Server
+
+```js
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+```
+
+- Enables frontend connection
+- Restricts allowed origins for security
+
+---
+
+### 3. Listening for Socket Connections
+
+```js
+io.on("connection", (socket) => {
+  console.log("User Connected! ID:", socket.id);
+});
+```
+
+- Runs whenever a new client connects
+- Each client gets a **unique socket ID**
+
+---
+
+### 4. Receiving and Broadcasting Messages
+
+```js
+socket.on("message", (data) => {
+  socket.broadcast.emit("receive-message", data);
+});
+```
+
+- `socket.on` → listens for client events
+- `socket.broadcast.emit` → sends message to **all clients except sender**
+
+---
+
+### 5. Handling Disconnection
+
+```js
+socket.on("disconnect", () => {
+  console.log("User Disconnected! ID:", socket.id);
+});
+```
+
+- Triggered automatically when client disconnects
+
+---
+
+### 6. Express Routes
+
+```js
+app.get("/", (req, res) => {
+  res.send("Learning websocket");
+});
+```
+
+- Regular HTTP endpoint (separate from WebSocket)
+
+---
+
+## Frontend (React + Socket.io Client)
+
+### Packages Used
+
+- `socket.io-client` – Connects to WebSocket server
+- `@mui/material` – UI components
+- `react` hooks (`useState`, `useEffect`, `useMemo`)
+
+---
+
+## Frontend Connection Logic
+
+### 1. Creating Socket Connection
+
+```js
+const socket = useMemo(() => io("http://localhost:8080"), []);
+```
+
+- `useMemo` ensures **single socket instance**
+- Prevents multiple connections on re-render
+
+---
+
+### 2. Emitting Messages to Server
+
+```js
+socket.emit("message", message);
+```
+
+- Sends data to server
+- Event name must match server listener
+
+---
+
+### 3. Listening for Server Events
+
+```js
+socket.on("receive-message", (data) => {
+  console.log(data);
+});
+```
+
+- Listens for messages broadcasted by server
+
+---
+
+### 4. Connection Lifecycle
+
+```js
+useEffect(() => {
+  socket.on("connect", () => {
+    console.log("Connected! ID:", socket.id);
+  });
+
+  return () => {
+    socket.disconnect();
+  };
+}, [socket]);
+```
+
+- Handles connection and cleanup
+- Prevents memory leaks
+
+---
+
+## Key Socket.io Concepts Used
+
+| Concept                   | Explanation                     |
+| ------------------------- | ------------------------------- |
+| `io.on()`                 | Listen for client connections   |
+| `socket.on()`             | Listen for custom events        |
+| `socket.emit()`           | Send event to server            |
+| `socket.broadcast.emit()` | Send event to all except sender |
+| `socket.id`               | Unique identifier per client    |
+
+---
+
+## CORS in WebSocket
+
+- Required because frontend and backend run on different ports
+- Configured on Socket.io server
+
+```js
+cors: {
+  origin: "http://localhost:5173";
+}
+```
+
+---
+
+## Message Flow (Step-by-Step)
+
+1. React client connects to Socket.io server
+2. Server assigns socket ID
+3. Client emits `message` event
+4. Server receives message
+5. Server broadcasts message to other clients
+6. Clients receive `receive-message` event
+
+---
+
+## Why Use WebSockets Here?
+
+- Instant message delivery
+- No polling or repeated HTTP requests
+- Efficient real-time communication
+
+---

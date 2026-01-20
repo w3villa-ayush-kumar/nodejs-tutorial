@@ -30,7 +30,7 @@ const App = () => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket]);
 
   return (
     <Container maxWidth="sm">
